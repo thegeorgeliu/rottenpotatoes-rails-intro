@@ -24,23 +24,12 @@ class MoviesController < ApplicationController
     end
     
     # Highlight the header of a column if it is sorted
-    if !session[:order].nil?
-      if session[:order] == 'title'
-        @order = 'title'
-        @title_class = 'hilite bg-warning'
-      elsif session[:order] == 'release_date'
-        @order = 'release_date'
-        @date_class = 'hilite bg-warning'
-      end
-    else
-      if params[:order] == 'title'
-        @order = 'title'
-        @title_class = 'hilite bg-warning'
-      elsif params[:order] == 'release_date'
-        @order = 'release_date'
-        @date_class = 'hilite bg-warning'
-      end
-      session[:order] = params[:order]
+    if params[:order] == 'title'
+      @order = 'title'
+      @title_class = 'hilite bg-warning'
+    elsif params[:order] == 'release_date'
+      @order = 'release_date'
+      @date_class = 'hilite bg-warning'
     end
     
     # Show selected movies
