@@ -7,11 +7,19 @@ class Movie < ActiveRecord::Base
   
   # Retrieve movies that have the ratings in the list
   #   or all movies if the list is nil
-  def self.with_ratings(ratings_list)
+  def self.with_ratings(ratings_list, sort_on)
     if ratings_list.nil?
-      Movie.all
-    else
-      Movie.where(rating: ratings_list)
+      if sort_on.nil?
+        Movie.all
+      else
+        Movie.order(sort_on)
+      end
+    else # if there are filters for ratings
+        if sort_on.nil?
+          Movie.where(rating: ratings_list)
+        else
+          Movie.where(rating: ratings_list).order(sort_on)
+        end
     end
   end
 end

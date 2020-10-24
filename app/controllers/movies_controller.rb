@@ -16,8 +16,17 @@ class MoviesController < ApplicationController
       @ratings_to_show = params[:ratings].keys
     end
     
+    # Highlight the header of a column if it is sorted
+    if params[:order] == 'title'
+      @order = 'title'
+      @title_class = 'hilite bg-warning'
+    elsif params[:order] == 'release_date'
+      @order = 'release_date'
+      @date_class = 'hilite bg-warning'
+    end
+    
     # Show selected movies
-    @movies = Movie.with_ratings(@ratings_to_show)
+    @movies = Movie.with_ratings(@ratings_to_show, params[:order])
   end
 
   def new
