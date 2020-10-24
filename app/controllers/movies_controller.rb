@@ -11,22 +11,49 @@ class MoviesController < ApplicationController
     
     # Filter list of movies with certain ratings
     if params[:ratings].nil?
-      @ratings_to_show = @all_ratings
-    else
+      # Check if a filter is saved in the session
+      if !session[:ratings].nil?
+        @ratings_to_show = session[:ratings]
+        redirect_to movies_path(:ratings => @ratings_to_show.zip(['1', '1', '1']).to_h)
+      else
+        @ratings_to_show = @all_ratings
+      end
+    else # if ratings is not nil
       @ratings_to_show = params[:ratings].keys
+      session[:ratings] = @ratings_to_show # save to session
     end
     
     # Highlight the header of a column if it is sorted
-    if params[:order] == 'title'
-      @order = 'title'
-      @title_class = 'hilite bg-warning'
-    elsif params[:order] == 'release_date'
-      @order = 'release_date'
-      @date_class = 'hilite bg-warning'
+    if !session[:order].nil?
+      if session[:order] == 'title'
+        @order = 'title'
+        @title_class = 'hilite bg-warning'
+      elsif session[:order] == 'release_date'
+        @order = 'release_date'
+        @date_class = 'hilite bg-warning'
+      end
+    else
+      if params[:order] == 'title'
+        @order = 'title'
+        @title_class = 'hilite bg-warning'
+      elsif params[:order] == 'release_date'
+        @order = 'release_date'
+        @date_class = 'hilite bg-warning'
+      end
+      session[:order] = params[:order]
     end
     
     # Show selected movies
-    @movies = Movie.with_ratings(@ratings_to_show, params[:order])
+    if params[:order].nil?
+      if !session[:order].nil?
+        @movies = Movie.with_ratings(@ratings_to_show, session[:order])
+      else
+        @movies = Movie.with_ratings(@ratings_to_show, nil)
+      end
+    else
+      @movies = Movie.with_ratings(@ratings_to_show, params[:order])
+      session[:order] = params[:order]
+    end
   end
 
   def new
